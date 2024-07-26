@@ -1,0 +1,5 @@
+../Core/Src/app_freertos.c:102:6:vApplicationStackOverflowHook	1
+../Core/Src/app_freertos.c:115:6:MX_FREERTOS_Init	1
+../Core/Src/app_freertos.c:170:6:StartDefaultTask	1
+../Core/Src/app_freertos.c:189:6:StartUsbTask	17
+../Core/Src/app_freertos.c:313:6:StartLoraTask	3
