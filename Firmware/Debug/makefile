@@ -71,8 +71,8 @@ all: main-build
 main-build: usblora.elf secondary-outputs
 
 # Tool invocations
-usblora.elf usblora.map: $(OBJS) $(USER_OBJS) C:\Users\Valenokks\STM32CubeIDE\workspace_1.15.1\usblora\STM32WLE5CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "usblora.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Valenokks\STM32CubeIDE\workspace_1.15.1\usblora\STM32WLE5CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="usblora.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+usblora.elf usblora.map: $(OBJS) $(USER_OBJS) C:\Users\Valenokks\Documents\GitHub\USB-LoRa\Firmware\STM32WLE5CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "usblora.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Valenokks\Documents\GitHub\USB-LoRa\Firmware\STM32WLE5CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="usblora.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

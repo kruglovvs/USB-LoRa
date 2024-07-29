@@ -1,0 +1,12 @@
+# Firmware
+Firmware/Debug/
+Firmware/Release/
+Firmware/.settings/
+Firmware/*.launch
+Firmware/*.o
+Firmware/*.hex
+Firmware/*.elf
+
+#Hardware
+Hardware/History/
+Hardware/__Previews/
