@@ -51,7 +51,41 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* Radio events function pointer */
+static RadioEvents_t RadioEvents;
 
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+/*!
+ * @brief Function to be executed on Radio Tx Done event
+ */
+static void OnTxDone(void);
+
+/**
+  * @brief Function to be executed on Radio Rx Done event
+  * @param  payload ptr of buffer received
+  * @param  size buffer size
+  * @param  rssi
+  * @param  LoraSnr_FskCfo
+  */
+static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo);
+
+/**
+  * @brief Function executed on Radio Tx Timeout event
+  */
+static void OnTxTimeout(void);
+
+/**
+  * @brief Function executed on Radio Rx Timeout event
+  */
+static void OnRxTimeout(void);
+
+/**
+  * @brief Function executed on Radio Rx Error event
+  */
+static void OnRxError(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -65,7 +99,15 @@ void SubghzApp_Init(void)
   /* USER CODE END SubghzApp_Init_1 */
 
   /* Radio initialization */
+  RadioEvents.TxDone = OnTxDone;
+  RadioEvents.RxDone = OnRxDone;
+  RadioEvents.TxTimeout = OnTxTimeout;
+  RadioEvents.RxTimeout = OnRxTimeout;
+  RadioEvents.RxError = OnRxError;
 
+  Radio.Init(&RadioEvents);
+
+  /* USER CODE BEGIN SubghzApp_Init_2 */
   /* USER CODE END SubghzApp_Init_2 */
 }
 
@@ -74,7 +116,35 @@ void SubghzApp_Init(void)
 /* USER CODE END EF */
 
 /* Private functions ---------------------------------------------------------*/
+static void OnTxDone(void)
+{
+  /* USER CODE BEGIN OnTxDone */
+  /* USER CODE END OnTxDone */
+}
 
+static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo)
+{
+  /* USER CODE BEGIN OnRxDone */
+  /* USER CODE END OnRxDone */
+}
+
+static void OnTxTimeout(void)
+{
+  /* USER CODE BEGIN OnTxTimeout */
+  /* USER CODE END OnTxTimeout */
+}
+
+static void OnRxTimeout(void)
+{
+  /* USER CODE BEGIN OnRxTimeout */
+  /* USER CODE END OnRxTimeout */
+}
+
+static void OnRxError(void)
+{
+  /* USER CODE BEGIN OnRxError */
+  /* USER CODE END OnRxError */
+}
 
 /* USER CODE BEGIN PrFD */
 

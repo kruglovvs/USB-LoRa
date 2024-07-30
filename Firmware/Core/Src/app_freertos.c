@@ -91,6 +91,8 @@ uint8_t command_help[] =
     "help";
 uint8_t config_terminal_echo[] =
     "config terminal echo ";
+uint8_t config_modulation[] =
+    "config modulation ";
 uint8_t true_str[] =
     "true";
 uint8_t false_str[] =
@@ -103,20 +105,20 @@ osThreadId_t DefaultTaskHandle;
 const osThreadAttr_t DefaultTask_attributes = {
   .name = "DefaultTask",
   .priority = (osPriority_t) osPriorityLow,
-  .stack_size = 128 * 4
+  .stack_size = 256 * 4
 };
 /* Definitions for UsbSendTask */
 osThreadId_t UsbSendTaskHandle;
 const osThreadAttr_t UsbSendTask_attributes = {
   .name = "UsbSendTask",
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 512 * 4
 };
 /* Definitions for LoraSendTask */
 osThreadId_t LoraSendTaskHandle;
 const osThreadAttr_t LoraSendTask_attributes = {
   .name = "LoraSendTask",
-  .priority = (osPriority_t) osPriorityAboveNormal,
+  .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 512 * 4
 };
 /* Definitions for UsbReceiveTask */
@@ -124,7 +126,7 @@ osThreadId_t UsbReceiveTaskHandle;
 const osThreadAttr_t UsbReceiveTask_attributes = {
   .name = "UsbReceiveTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 512 * 4
+  .stack_size = 1024 * 4
 };
 /* Definitions for LoRaReceiveTask */
 osThreadId_t LoRaReceiveTaskHandle;
@@ -243,10 +245,10 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of SendLoraQueue */
-  SendLoraQueueHandle = osMessageQueueNew (5, sizeof(char *), &SendLoraQueue_attributes);
+  SendLoraQueueHandle = osMessageQueueNew (10, sizeof(char *), &SendLoraQueue_attributes);
 
   /* creation of SendUsbQueue */
-  SendUsbQueueHandle = osMessageQueueNew (5, sizeof(char *), &SendUsbQueue_attributes);
+  SendUsbQueueHandle = osMessageQueueNew (10, sizeof(char *), &SendUsbQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -291,7 +293,7 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* init code for SubGHz_Phy */
-  //MX_SubGHz_Phy_Init();
+  MX_SubGHz_Phy_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for (;;)
@@ -346,10 +348,10 @@ void StartLoraSendTask(void *argument)
   {
     if (!osMessageQueueGet(SendLoraQueueHandle, &input_buffer, NULL, osWaitForever))
     {
-      osMutexAcquire(LoraMutexHandle, osWaitForever);
-      osEventFlagsClear(LoraSentEventHandle, 0);
+      //osMutexAcquire(LoraMutexHandle, osWaitForever);
+      //osEventFlagsClear(LoraSentEventHandle, 0);
       Radio.Send(input_buffer, strlen(input_buffer));
-      osEventFlagsWait(LoraSentEventHandle, 0, 0, osWaitForever);
+      //osEventFlagsWait(LoraSentEventHandle, 0, 0, osWaitForever);
       free(input_buffer);
     }
   }
@@ -410,7 +412,6 @@ void StartUsbReceiveTask(void *argument)
 
     uint8_t input_buffer[300];
     bool echo = true;
-    size_t i = 0;
     /* Infinite loop */
     for (;;)
     {
@@ -419,9 +420,13 @@ void StartUsbReceiveTask(void *argument)
       osMutexAcquire(UsbMutexHandle, osWaitForever);
       if (echo)
 	  {
-		HAL_UART_Transmit(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
+		HAL_UART_Transmit(&huart1, input_buffer, 1, HAL_MAX_DELAY);
 	  }
-      for (i = 1; i < sizeof(input_buffer); ++i)
+      if (input_buffer[0] == '\n' || input_buffer[0] == '\r') {
+  		HAL_UART_Transmit(&huart1, new_line, strlen(new_line), HAL_MAX_DELAY);
+    	  continue;
+      }
+      for (size_t i = 1; i < sizeof(input_buffer); ++i)
       {
         HAL_UART_Receive(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
         if (echo)
@@ -471,6 +476,17 @@ void StartUsbReceiveTask(void *argument)
               HAL_UART_Transmit(&huart1, error_parse, strlen(error_parse), HAL_MAX_DELAY);
               HAL_UART_Transmit(&huart1, new_line, strlen(new_line), HAL_MAX_DELAY);
             }
+          } else if (i > strlen((char *)config_modulation) && !strncmp((char *)input_buffer, (char *)config_modulation, strlen(config_modulation)))
+          {
+        	  char *input_parameters = input_buffer + strlen((char *)config_modulation);
+        	  char *last_string, string;
+        	  string = strtok_r(input_parameters, "     ", &last_string);
+        	  if (string) {
+        		  //HAL_UART_Transmit(&huart1, input_parameters, strlen(input_parameters), HAL_MAX_DELAY);
+                  HAL_UART_Transmit(&huart1, new_line, strlen(new_line), HAL_MAX_DELAY);
+        		  HAL_UART_Transmit(&huart1, string, strlen(string), HAL_MAX_DELAY);
+                  HAL_UART_Transmit(&huart1, new_line, strlen(new_line), HAL_MAX_DELAY);
+        	  }
           }
           else
           {
@@ -500,15 +516,6 @@ void StartUsbReceiveTask(void *argument)
 void StartLoraReceiveTask(void *argument)
 {
   /* USER CODE BEGIN StartLoraReceiveTask */
-  osMutexAcquire(LoraMutexHandle, osWaitForever);
-  RadioEvents.TxDone = OnTxDone;
-  RadioEvents.RxDone = OnRxDone;
-  RadioEvents.TxTimeout = OnTxTimeout;
-  RadioEvents.RxTimeout = OnRxTimeout;
-  RadioEvents.RxError = OnRxError;
-
-  Radio.Init(&RadioEvents);
-
   /* USER CODE BEGIN SubghzApp_Init_2 */
   Radio.SetModem(MODEM_LORA);
   Radio.SetChannel(868000000);
@@ -557,197 +564,3 @@ void StartLoraReceiveTask(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-void StartUsbTask(void *argument)
-{
-  /* USER CODE BEGIN StartUsbTask */
-
-  uint8_t input_buffer[300];
-  uint8_t welcome[] =
-      "\n\r"
-      "|------------------------------------------------------------------------------|\n\r"
-      "|  ╔╗╔╗╔══╗╔╗  ╔═══╗╔╗ ╔╗╔══╗╔╗╔══╗╔╗╔══╗╔══╗  ╔╗╔╗╔══╗╔══╗ ╔╗  ╔══╗╔═══╗╔══╗  |\n\r"
-      "|  ║║║║║╔╗║║║  ║╔══╝║╚═╝║║╔╗║║║║╔═╝║║║╔═╝║╔═╝  ║║║║║╔═╝║╔╗║ ║║  ║╔╗║║╔═╗║║╔╗║  |\n\r"
-      "|  ║║║║║╚╝║║║  ║╚══╗║╔╗ ║║║║║║╚╝║  ║╚╝║  ║╚═╗  ║║║║║╚═╗║╚╝╚╗║║  ║║║║║╚═╝║║╚╝║  |\n\r"
-      "|  ║╚╝║║╔╗║║║  ║╔══╝║║╚╗║║║║║║╔╗║  ║╔╗║  ╚═╗║  ║║║║╚═╗║║╔═╗║║║  ║║║║║╔╗╔╝║╔╗║  |\n\r"
-      "|  ╚╗╔╝║║║║║╚═╗║╚══╗║║ ║║║╚╝║║║║╚═╗║║║╚═╗╔═╝║  ║╚╝║╔═╝║║╚═╝║║╚═╗║╚╝║║║║║ ║║║║  |\n\r"
-      "|   ╚╝ ╚╝╚╝╚══╝╚═══╝╚╝ ╚╝╚══╝╚╝╚══╝╚╝╚══╝╚══╝  ╚══╝╚══╝╚═══╝╚══╝╚══╝╚╝╚╝ ╚╝╚╝  |\n\r"
-      // "|  █─█─████─█───███─█──█─████─█──█─█──█─███──█─█─███─████──█───████─████─████  |\n\r"
-      // "|  █─█─█──█─█───█───██─█─█──█─█─█──█─█──█────█─█─█───█──██─█───█──█─█──█─█──█  |\n\r"
-      // "|  █─█─████─█───███─█─██─█──█─██───██───███──█─█─███─████──█───█──█─████─████  |\n\r"
-      // "|  ███─█──█─█───█───█──█─█──█─█─█──█─█────█──█─█───█─█──██─█───█──█─█─█──█──█  |\n\r"
-      // "|  ─█──█──█─███─███─█──█─████─█──█─█──█─███──███─███─████──███─████─█─█──█──█  |\n\r"
-      "|------------------------------------------------------------------------------|\n\r"
-      "| Radio parameters:                                                            |\n\r"
-      "|    SF = 10                                                                   |\n\r"
-      "|    CR = 4/8                                                                  |\n\r"
-      "|    Bandwidth = 250k                                                          |\n\r"
-      "|    CRC on                                                                    |\n\r"
-      "|    Implicit header                                                           |\n\r"
-      "|------------------------------------------------------------------------------|\n\r"
-      "| you can use these commands:                                                  |\n\r"
-      "|    @send {data with size < 256} - to send smth over LoRa                     |\n\r"
-      "|    @help - to call this menu                                                 |\n\r"
-      "|    @config terminal echo {true/false} - set uart echo for input              |\n\r"
-      "| ctrl+C or ctrl+Z - for undo                                                  |\n\r"
-      "|------------------------------------------------------------------------------|\n\r"
-      "| when LoRa receives data it will be written to this terminal                  |\n\r"
-      "|------------------------------------------------------------------------------|\n\r";
-  uint8_t new_line[] =
-      "\n\r@";
-  uint8_t error_parse[] =
-      "\n\r#cannot parse your command";
-  uint8_t error_send[] =
-      "\n\r#cannot send text, maybe memory errors";
-  uint8_t command_send[] =
-      "send ";
-  uint8_t command_help[] =
-      "help";
-  uint8_t config_terminal_echo[] =
-      "config terminal echo ";
-  uint8_t true_str[] =
-      "true";
-  uint8_t false_str[] =
-      "false";
-  bool echo = true;
-  HAL_UART_Transmit(&huart1, welcome, sizeof(welcome), HAL_MAX_DELAY);
-  /* Infinite loop */
-  for (;;)
-  {
-    HAL_UART_Transmit(&huart1, new_line, sizeof(new_line), HAL_MAX_DELAY);
-    for (int i = 0; i < sizeof(input_buffer); ++i)
-    {
-      HAL_UART_Receive(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
-      if (echo)
-      {
-        HAL_UART_Transmit(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
-      }
-      if (input_buffer[i] == '\n' || input_buffer[i] == '\r')
-      {
-
-        input_buffer[i] = '\0';
-        if (i == 0)
-        {
-          // do nothing
-        }
-        else if (!strncmp((char *)input_buffer, (char *)command_help, sizeof(command_help) - 1))
-        {
-          HAL_UART_Transmit(&huart1, welcome, sizeof(welcome), HAL_MAX_DELAY);
-        }
-        else if (i > strlen((char *)command_send) && !strncmp((char *)input_buffer, (char *)command_send, sizeof(command_send) - 1))
-        {
-          char *malloc_buffer = malloc(strlen(input_buffer) - (sizeof(command_send) - 1));
-          if (!malloc_buffer)
-          {
-            break;
-          }
-          strncpy(malloc_buffer, input_buffer + sizeof(command_send) - 1, 256);
-          if (osMessageQueuePut(SendLoraQueueHandle, &malloc_buffer, NULL, osWaitForever))
-          {
-            free(malloc_buffer);
-            HAL_UART_Transmit(&huart1, error_send, sizeof(error_send), HAL_MAX_DELAY);
-          }
-        }
-        else if (i > strlen((char *)config_terminal_echo) && !strncmp((char *)input_buffer, (char *)config_terminal_echo, sizeof(config_terminal_echo) - 1))
-        {
-          if (!strncmp((char *)input_buffer + (sizeof(config_terminal_echo) - 1), (char *)true_str, sizeof(true_str) - 1))
-          {
-            echo = true;
-          }
-          else if (!strncmp((char *)input_buffer + (sizeof(config_terminal_echo) - 1), (char *)false_str, sizeof(false_str) - 1))
-          {
-            echo = false;
-          }
-          else
-          {
-            HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
-          }
-        }
-        else
-        {
-          HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
-        }
-        break;
-      }
-      else if (input_buffer[i] == '\x03' || input_buffer[i] == '\x1A')
-      {
-        break;
-      }
-    }
-  }
-  /* USER CODE END StartUsbTask */
-}
-
-/* USER CODE BEGIN Header_StartLoraTask */
-/**
- * @brief Function implementing the LoraTask thread.
- * @param argument: Not used
- * @retval None
- */
-
-#pragma region lora_callbacks
-static void OnTxDone(void)
-{
-  /* USER CODE BEGIN OnTxDone */
-  uint8_t message[] = "#!Successfully sent\n\r";
-  uint8_t *message_malloc = malloc(strlen(message));
-  strcpy(message_malloc, message);
-  HAL_UART_Transmit(&huart1, "kekekeke1", strlen("kekekeke1"), HAL_MAX_DELAY);
-  osMessageQueuePut(SendUsbQueueHandle, &message_malloc, NULL, 0);
-  //osEventFlagsSet(LoraSentEventHandle, 0);
-  HAL_UART_Transmit(&huart1, "kekekeke2", strlen("kekekeke2"), HAL_MAX_DELAY);
-  Radio.Rx(0);
-  /* USER CODE END OnTxDone */
-}
-
-static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo)
-{
-  /* USER CODE BEGIN OnRxDone */
-  uint8_t message[] = "#!Received: \n\r";
-  uint8_t message_rssi[128];
-  uint8_t *payload_hex_string[size * (sizeof("0xHH ") - 1) + 1];
-
-  sprintf(message_rssi, "\n\r#!size: %d; rssi: %d\n\r", size, rssi);
-  for (int i = 0; i < size; ++i)
-  {
-    sprintf(payload_hex_string + (i * strlen("0xHH ")), "0x%X", payload[i]);
-  }
-
-  uint8_t *message_malloc = calloc(sizeof(uint8_t), strlen(payload_hex_string) + strlen(message) + strlen(message_rssi) + 1);
-  strcat(message_malloc, message);
-  strcat(message_malloc, payload_hex_string);
-  strcat(message_malloc, message_rssi);
-
-  osMessageQueuePut(SendUsbQueueHandle, &message_malloc, NULL, 0);
-  Radio.Rx(0);
-  /* USER CODE END OnRxDone */
-}
-
-static void OnTxTimeout(void)
-{
-  /* USER CODE BEGIN OnTxTimeout */
-  uint8_t message[] = "#!Sending timeout\n\r";
-  uint8_t *message_malloc = malloc(strlen(message));
-  strcpy(message_malloc, message);
-  osMessageQueuePut(SendUsbQueueHandle, &message_malloc, NULL, 0);
-  Radio.Rx(0);
-  /* USER CODE END OnTxTimeout */
-}
-
-static void OnRxTimeout(void)
-{
-  /* USER CODE BEGIN OnRxTimeout */
-  Radio.Rx(0);
-  /* USER CODE END OnRxTimeout */
-}
-
-static void OnRxError(void)
-{
-  /* USER CODE BEGIN OnRxError */
-  uint8_t message[] = "#!Receiving error\n\r";
-  uint8_t *message_malloc = malloc(strlen(message));
-  strcpy(message_malloc, message);
-  osMessageQueuePut(SendUsbQueueHandle, &message_malloc, NULL, 0);
-  Radio.Rx(0);
-  /* USER CODE END OnRxError */
-}
-#pragma endregion lora_callbacks
