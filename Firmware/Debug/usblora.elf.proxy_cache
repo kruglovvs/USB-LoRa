@@ -58982,7 +58982,7 @@ Contents of the .debug_info section:
     <1ca2d>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <1ca31>   DW_AT_language    : 29	(C11)
     <1ca32>   DW_AT_name        : (indirect string, offset: 0xb6c03): ../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
-    <1ca36>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <1ca36>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <1ca3a>   DW_AT_ranges      : 0x148e
     <1ca3e>   DW_AT_low_pc      : 0
     <1ca42>   DW_AT_stmt_list   : 0x1d3ec
@@ -60512,7 +60512,7 @@ Contents of the .debug_info section:
     <1d5fe>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <1d602>   DW_AT_language    : 29	(C11)
     <1d603>   DW_AT_name        : (indirect string, offset: 0xb6f16): ../Middlewares/Third_Party/FreeRTOS/Source/list.c
-    <1d607>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <1d607>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <1d60b>   DW_AT_ranges      : 0x14f8
     <1d60f>   DW_AT_low_pc      : 0
     <1d613>   DW_AT_stmt_list   : 0x1df87
@@ -60883,7 +60883,7 @@ Contents of the .debug_info section:
     <1d8ad>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <1d8b1>   DW_AT_language    : 29	(C11)
     <1d8b2>   DW_AT_name        : (indirect string, offset: 0xb7607): ../Middlewares/Third_Party/FreeRTOS/Source/queue.c
-    <1d8b6>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <1d8b6>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <1d8ba>   DW_AT_ranges      : 0x1523
     <1d8be>   DW_AT_low_pc      : 0
     <1d8c2>   DW_AT_stmt_list   : 0x1e727
@@ -64310,7 +64310,7 @@ Contents of the .debug_info section:
     <1f415>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <1f419>   DW_AT_language    : 29	(C11)
     <1f41a>   DW_AT_name        : (indirect string, offset: 0xb83b9): ../Middlewares/Third_Party/FreeRTOS/Source/tasks.c
-    <1f41e>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <1f41e>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <1f422>   DW_AT_ranges      : 0x162d
     <1f426>   DW_AT_low_pc      : 0
     <1f42a>   DW_AT_stmt_list   : 0x1fe92
@@ -69350,7 +69350,7 @@ Contents of the .debug_info section:
     <21c45>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <21c49>   DW_AT_language    : 29	(C11)
     <21c4a>   DW_AT_name        : (indirect string, offset: 0xb8c88): ../Middlewares/Third_Party/FreeRTOS/Source/timers.c
-    <21c4e>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <21c4e>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <21c52>   DW_AT_ranges      : 0x17c1
     <21c56>   DW_AT_low_pc      : 0
     <21c5a>   DW_AT_stmt_list   : 0x21c5a
@@ -72810,7 +72810,7 @@ Contents of the .debug_info section:
     <23734>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <23738>   DW_AT_language    : 29	(C11)
     <23739>   DW_AT_name        : (indirect string, offset: 0xb9160): ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/port.c
-    <2373d>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <2373d>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <23741>   DW_AT_ranges      : 0x1873
     <23745>   DW_AT_low_pc      : 0
     <23749>   DW_AT_stmt_list   : 0x22a3e
@@ -73394,7 +73394,7 @@ Contents of the .debug_info section:
     <23bc8>   DW_AT_producer    : (indirect string, offset: 0x75d03): GNU C11 12.3.1 20230626 -mcpu=cortex-m4 -mfloat-abi=soft -mthumb -march=armv7e-m -g3 -O0 -std=gnu11 -ffunction-sections -fdata-sections -fstack-usage -fcyclomatic-complexity
     <23bcc>   DW_AT_language    : 29	(C11)
     <23bcd>   DW_AT_name        : (indirect string, offset: 0xb93d4): ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_1.c
-    <23bd1>   DW_AT_comp_dir    : (indirect string, offset: 0xaa2ac): C:/Users/Valenokks/STM32CubeIDE/workspace_1.15.1/usblora/Debug
+    <23bd1>   DW_AT_comp_dir    : (indirect string, offset: 0x399c3): C:/Users/Valenokks/Documents/GitHub/USB-LoRa/Firmware/Debug
     <23bd5>   DW_AT_ranges      : 0x18ca
     <23bd9>   DW_AT_low_pc      : 0
     <23bdd>   DW_AT_stmt_list   : 0x2334d
