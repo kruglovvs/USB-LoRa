@@ -225,7 +225,7 @@ void StartUsbTask(void *argument)
 			  "|    CRC on                                                                    |\n\r"
 			  "|    Implicit header                                                           |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
-	  	  	  "| you can use these commands:                                                  |\n\r"
+	  	  	  "| You can use these commands:                                                  |\n\r"
 			  "|    @send {data with size < 256} - to send smth over LoRa                     |\n\r"
 			  "|    @help - to call this menu                                                 |\n\r"
 			  "|    @config terminal echo {true/false} - set uart echo for input              |\n\r"
@@ -234,10 +234,10 @@ void StartUsbTask(void *argument)
 			  "|               | | +---- coderate: {1: 4/5, 2: 4/6, 3: 4/7, 4: 4/8}           |\n\r"
 			  "|               | +------ SF: {6: 64, 7: 128, 8: 256, 9: 512,                  |\n\r"
               "|               |              10: 1024, 11: 2048, 12: 4096  chips}            |\n\r"
-              "|               +-------- bandwidth 0: 125 kHz, 1: 250 kHz,  2: 500 kHz        |\n\r"
+              "|               +-------- bandwidth: {0: 125 kHz, 1: 250 kHz,  2: 500 kHz}     |\n\r"
 			  "|    ctrl+C or ctrl+Z - for undo                                               |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
-	  	  	  "| when LoRa receives data it will be written to this terminal                  |\n\r"
+	  	  	  "| When LoRa receives data it will be written to this terminal                  |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r";
 	  uint8_t new_line[] =
 			  "\n\r@";
