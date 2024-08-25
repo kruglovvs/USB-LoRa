@@ -64,7 +64,7 @@ osThreadId_t UsbTaskHandle;
 const osThreadAttr_t UsbTask_attributes = {
   .name = "UsbTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 1024 * 4
+  .stack_size = 2048 * 4
 };
 /* Definitions for LoraTask */
 osThreadId_t LoraTaskHandle;
@@ -170,6 +170,7 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* init code for SubGHz_Phy */
+  //MX_SubGHz_Phy_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
@@ -197,15 +198,16 @@ void StartUsbTask(void *argument)
 				"|------------------------------------------------------------------------------|\n\r";
 	  HAL_UART_Transmit(&huart1, initializing_radio, sizeof(initializing_radio), HAL_MAX_DELAY);
       MX_SubGHz_Phy_Init();
+	  osDelay(100);
 	  uint8_t radio_is_init[] =
 				"|------------------------------------------------------------------------------|\n\r"
 				"| Radio is initialized                                                         |\n\r"
 				"|------------------------------------------------------------------------------|\n\r";
 	  HAL_UART_Transmit(&huart1, radio_is_init, sizeof(radio_is_init), HAL_MAX_DELAY);
 
-	  uint8_t input_buffer[300];
-	  uint8_t welcome[] =
-			  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	      "\n\r"
+	  uint8_t input_buffer[512];
+
+	  uint8_t help_menu[] =	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  "\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
 			  "|  ╔╗╔╗╔══╗╔╗  ╔═══╗╔╗ ╔╗╔══╗╔╗╔══╗╔╗╔══╗╔══╗  ╔╗╔╗╔══╗╔══╗ ╔╗  ╔══╗╔═══╗╔══╗  |\n\r"
 			  "|  ║║║║║╔╗║║║  ║╔══╝║╚═╝║║╔╗║║║║╔═╝║║║╔═╝║╔═╝  ║║║║║╔═╝║╔╗║ ║║  ║╔╗║║╔═╗║║╔╗║  |\n\r"
@@ -213,11 +215,6 @@ void StartUsbTask(void *argument)
 			  "|  ║╚╝║║╔╗║║║  ║╔══╝║║╚╗║║║║║║╔╗║  ║╔╗║  ╚═╗║  ║║║║╚═╗║║╔═╗║║║  ║║║║║╔╗╔╝║╔╗║  |\n\r"
 			  "|  ╚╗╔╝║║║║║╚═╗║╚══╗║║ ║║║╚╝║║║║╚═╗║║║╚═╗╔═╝║  ║╚╝║╔═╝║║╚═╝║║╚═╗║╚╝║║║║║ ║║║║  |\n\r"
 			  "|   ╚╝ ╚╝╚╝╚══╝╚═══╝╚╝ ╚╝╚══╝╚╝╚══╝╚╝╚══╝╚══╝  ╚══╝╚══╝╚═══╝╚══╝╚══╝╚╝╚╝ ╚╝╚╝  |\n\r"
-		   // "|  █─█─████─█───███─█──█─████─█──█─█──█─███──█─█─███─████──█───████─████─████  |\n\r"
-		   // "|  █─█─█──█─█───█───██─█─█──█─█─█──█─█──█────█─█─█───█──██─█───█──█─█──█─█──█  |\n\r"
-		   // "|  █─█─████─█───███─█─██─█──█─██───██───███──█─█─███─████──█───█──█─████─████  |\n\r"
-		   // "|  ███─█──█─█───█───█──█─█──█─█─█──█─█────█──█─█───█─█──██─█───█──█─█─█──█──█  |\n\r"
-		   // "|  ─█──█──█─███─███─█──█─████─█──█─█──█─███──███─███─████──███─████─█─█──█──█  |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
 	  	  	  "| Radio parameters:                                                            |\n\r"
 	  	  	  "|    SF = 10                                                                   |\n\r"
@@ -230,6 +227,12 @@ void StartUsbTask(void *argument)
 			  "|    @send {data with size < 256} - to send smth over LoRa                     |\n\r"
 			  "|    @help - to call this menu                                                 |\n\r"
 			  "|    @config terminal echo {true/false} - set uart echo for input              |\n\r"
+			  "|    @config rf x x x - set RF modulation parameters                           |\n\r"
+			  "|               | | |                                                          |\n\r"
+			  "|               | | +---- coderate: {1: 4/5, 2: 4/6, 3: 4/7, 4: 4/8}           |\n\r"
+			  "|               | +------ SF: {6: 64, 7: 128, 8: 256, 9: 512,                  |\n\r"
+              "|               |              10: 1024, 11: 2048, 12: 4096  chips}            |\n\r"
+              "|               +-------- bandwidth 0: 125 kHz, 1: 250 kHz,  2: 500 kHz        |\n\r"
 			  "| ctrl+C or ctrl+Z - for undo                                                  |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
 	  	  	  "| when LoRa receives data it will be written to this terminal                  |\n\r"
@@ -247,7 +250,7 @@ void StartUsbTask(void *argument)
 	  uint8_t config_rf[] =
 			  "config rf ";
 	  uint8_t config_rf_success[] =
-			  "!rf parameters are changed";
+			  "@!RF modulation parameters are changed";
 	  uint8_t config_terminal_echo[] =
 			  "config terminal echo ";
 	  uint8_t true_str[] =
@@ -255,7 +258,7 @@ void StartUsbTask(void *argument)
 	  uint8_t false_str[] =
 			  "false";
 	  bool echo = true;
-	  HAL_UART_Transmit(&huart1, welcome, sizeof(welcome), HAL_MAX_DELAY);
+	  HAL_UART_Transmit(&huart1, help_menu, sizeof(help_menu), HAL_MAX_DELAY);
 	  /* Infinite loop */
 	  for(;;)
 	  {
@@ -282,7 +285,7 @@ void StartUsbTask(void *argument)
 				}
 				else if (!strncmp((char*)input_buffer, (char*)command_help, sizeof(command_help) - 1))
 				{
-					  HAL_UART_Transmit(&huart1, welcome, sizeof(welcome), HAL_MAX_DELAY);
+					  HAL_UART_Transmit(&huart1, help_menu, sizeof(help_menu), HAL_MAX_DELAY);
 				}
 				else if (i > strlen((char*)command_send) && !strncmp((char*)input_buffer, (char*)command_send, sizeof(command_send) - 1)) {
 					char *malloc_buffer = malloc(strlen(input_buffer) - (sizeof(command_send) - 1));
@@ -296,8 +299,9 @@ void StartUsbTask(void *argument)
 					}
 				}
 				else if (i > strlen((char*)config_rf) && !strncmp((char*)input_buffer, (char*)config_rf, sizeof(config_rf) - 1)) {
-					char *str = input_buffer + (sizeof(config_terminal_echo) - 1);
+					char *str = input_buffer + (sizeof(config_rf) - 1);
 					char *str_saveptr = NULL;
+
 
 					char *str_bandwidth = strtok_r(str, " ", &str_saveptr);
 					char *str_SF = strtok_r(NULL, " ", &str_saveptr);
@@ -388,7 +392,6 @@ void StartLoraTask(void *argument)
   //MX_SubGHz_Phy_Init();
 
   char formatter[500];
-  osDelay(4000);
   char *input_buffer = NULL;
 	  for(;;)
 	  {
