@@ -250,7 +250,7 @@ void StartUsbTask(void *argument)
 	  uint8_t config_rf[] =
 			  "config rf ";
 	  uint8_t config_rf_success[] =
-			  "@!RF modulation parameters are changed";
+			  "\n\r@!RF modulation parameters are changed";
 	  uint8_t config_terminal_echo[] =
 			  "config terminal echo ";
 	  uint8_t true_str[] =
