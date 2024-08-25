@@ -1,7 +1,0 @@
-../Core/Src/app_freertos.c:210:6:vApplicationStackOverflowHook	16	static
-../Core/Src/app_freertos.c:223:6:MX_FREERTOS_Init	8	static
-../Core/Src/app_freertos.c:293:6:StartDefaultTask	16	static
-../Core/Src/app_freertos.c:313:6:StartUsbSendTask	32	static
-../Core/Src/app_freertos.c:342:6:StartLoraSendTask	32	static
-../Core/Src/app_freertos.c:368:6:StartUsbReceiveTask	352	static
-../Core/Src/app_freertos.c:516:6:StartLoraReceiveTask	64	static

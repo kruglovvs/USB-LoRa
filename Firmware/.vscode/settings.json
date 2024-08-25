@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "stddef.h": "c",
-        "initializer_list": "c",
-        "utility": "c",
-        "xutility": "c"
-    }
-}

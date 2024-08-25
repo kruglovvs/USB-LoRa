@@ -26,6 +26,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
+#include "usart.h"
 
 /* USER CODE END Includes */
 
@@ -108,6 +109,40 @@ void SubghzApp_Init(void)
   Radio.Init(&RadioEvents);
 
   /* USER CODE BEGIN SubghzApp_Init_2 */
+  	Radio.SetModem(MODEM_LORA);
+    Radio.SetChannel(868000000);
+    Radio.SetRxConfig(
+  		  MODEM_LORA,
+  		  1,
+  		  10,
+  		  4,
+  		  0,
+  		  8,
+  		  0,
+  		  0,
+  		  12,
+  		  1,
+  		  0,
+  		  0,
+  		  0,
+  		  true);
+    Radio.SetTxConfig(
+    	  MODEM_LORA,
+    	  15,
+  		  0,
+  		  1,
+  		  10,
+  		  4,
+  		  32,
+  		  1,
+  		  1,
+  		  0,
+  		  0,
+  		  0,
+  		  0);
+    //Radio.SetMaxPayloadLength(MODEM_LORA, 256);
+    //Radio.SetPublicNetwork(true);
+    Radio.Rx(0);
   /* USER CODE END SubghzApp_Init_2 */
 }
 
@@ -119,30 +154,46 @@ void SubghzApp_Init(void)
 static void OnTxDone(void)
 {
   /* USER CODE BEGIN OnTxDone */
+    HAL_UART_Transmit(&huart1, "!Successfully sent\n\r@", sizeof("!Successfully sent\n\r@"), HAL_MAX_DELAY);
+    Radio.Rx(0);
   /* USER CODE END OnTxDone */
 }
 
 static void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t LoraSnr_FskCfo)
 {
   /* USER CODE BEGIN OnRxDone */
+	char formatter[128];
+    for (int i = 0; i < size; ++i) {
+    	sprintf(formatter, "0x%X ", payload[i]);
+        HAL_UART_Transmit(&huart1, formatter, strlen(formatter), HAL_MAX_DELAY);
+    }
+	sprintf(formatter, "\n\r!size: %d; rssi: %d\n\r@", size, rssi);
+    HAL_UART_Transmit(&huart1, formatter, strlen(formatter), HAL_MAX_DELAY);
+    Radio.Rx(0);
   /* USER CODE END OnRxDone */
 }
 
 static void OnTxTimeout(void)
 {
   /* USER CODE BEGIN OnTxTimeout */
+    HAL_UART_Transmit(&huart1, "!Sending timeout\n\r@", sizeof("!Sending timeout\n\r@"), HAL_MAX_DELAY);
+    Radio.Rx(0);
   /* USER CODE END OnTxTimeout */
 }
 
 static void OnRxTimeout(void)
 {
   /* USER CODE BEGIN OnRxTimeout */
+    //HAL_UART_Transmit(&huart1, "!Receiving timeout\n\r@", sizeof("!Receiving timeout\n\r@"), HAL_MAX_DELAY);
+    Radio.Rx(0);
   /* USER CODE END OnRxTimeout */
 }
 
 static void OnRxError(void)
 {
   /* USER CODE BEGIN OnRxError */
+    HAL_UART_Transmit(&huart1, "!Receiving error\n\r@", sizeof("!Receiving error\n\r@"), HAL_MAX_DELAY);
+    Radio.Rx(0);
   /* USER CODE END OnRxError */
 }
 

@@ -1,7 +1,0 @@
-../SubGHz_Phy/Target/radio_board_if.c:60:9:RBI_Init	1
-../SubGHz_Phy/Target/radio_board_if.c:86:9:RBI_DeInit	1
-../SubGHz_Phy/Target/radio_board_if.c:112:9:RBI_ConfigRFSwitch	3
-../SubGHz_Phy/Target/radio_board_if.c:145:9:RBI_GetTxConfig	1
-../SubGHz_Phy/Target/radio_board_if.c:171:9:RBI_IsTCXO	1
-../SubGHz_Phy/Target/radio_board_if.c:197:9:RBI_IsDCDC	1
-../SubGHz_Phy/Target/radio_board_if.c:223:9:RBI_GetRFOMaxPowerConfig	2
