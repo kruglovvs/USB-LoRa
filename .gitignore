@@ -5,6 +5,7 @@ Firmware/.settings/
 *.o
 *.hex
 *.elf
+*.launch
 
 #Hardware .gitignore
 Hardware/History/

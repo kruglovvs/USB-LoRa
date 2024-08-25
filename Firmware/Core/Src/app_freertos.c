@@ -244,6 +244,10 @@ void StartUsbTask(void *argument)
 			  "send ";
 	  uint8_t command_help[] =
 			  "help";
+	  uint8_t config_rf[] =
+			  "config rf ";
+	  uint8_t config_rf_success[] =
+			  "!rf parameters are changed";
 	  uint8_t config_terminal_echo[] =
 			  "config terminal echo ";
 	  uint8_t true_str[] =
@@ -259,9 +263,18 @@ void StartUsbTask(void *argument)
 		for (int i = 0; i < sizeof(input_buffer); ++i) {
 			HAL_UART_Receive(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
 			if (echo) {
-				HAL_UART_Transmit(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
+				if (input_buffer[i] != '\x7f' || i > 0) {
+					HAL_UART_Transmit(&huart1, input_buffer + i, 1, HAL_MAX_DELAY);
+				}
 			}
-			if (input_buffer[i] == '\n' || input_buffer[i] == '\r') {
+			if (input_buffer[i] == '\x7f') {
+				if (i == 0) {
+					i -= 1;
+				} else {
+					i -= 2;
+				}
+			}
+			else if (input_buffer[i] == '\n' || input_buffer[i] == '\r') {
 
 				input_buffer[i] = '\0';
 				if (i == 0) {
@@ -282,6 +295,62 @@ void StartUsbTask(void *argument)
 						HAL_UART_Transmit(&huart1, error_send, sizeof(error_send), HAL_MAX_DELAY);
 					}
 				}
+				else if (i > strlen((char*)config_rf) && !strncmp((char*)input_buffer, (char*)config_rf, sizeof(config_rf) - 1)) {
+					char *str = input_buffer + (sizeof(config_terminal_echo) - 1);
+					char *str_saveptr = NULL;
+
+					char *str_bandwidth = strtok_r(str, " ", &str_saveptr);
+					char *str_SF = strtok_r(NULL, " ", &str_saveptr);
+					char *str_coderate = strtok_r(NULL, " ", &str_saveptr);
+
+					if (!str_bandwidth || !str_SF || !str_coderate) {
+						HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
+						break;
+					}
+
+					int bandwidth = atoi(str_bandwidth);
+					int SF = atoi(str_SF);
+					int coderate = atoi(str_coderate);
+
+					if ((bandwidth < 0) || (bandwidth > 2) ||
+						(SF < 6) || (SF > 12) ||
+						(coderate < 1) || (coderate > 4)) {
+						HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
+						break;
+					}
+					Radio.SetRxConfig(
+					  		  MODEM_LORA,
+					  		  bandwidth,
+					  		  SF,
+					  		  coderate,
+					  		  0,
+					  		  8,
+					  		  0,
+					  		  0,
+					  		  12,
+					  		  1,
+					  		  0,
+					  		  0,
+					  		  0,
+					  		  true);
+					    Radio.SetTxConfig(
+					    	  MODEM_LORA,
+					    	  15,
+					  		  0,
+					  		  bandwidth,
+					  		  SF,
+					  		  coderate,
+					  		  32,
+					  		  1,
+					  		  1,
+					  		  0,
+					  		  0,
+					  		  0,
+					  		  0);
+					HAL_UART_Transmit(&huart1, config_rf_success, sizeof(config_rf_success), HAL_MAX_DELAY);
+					break;
+
+				}
 				else if (i > strlen((char*)config_terminal_echo) && !strncmp((char*)input_buffer, (char*)config_terminal_echo, sizeof(config_terminal_echo) - 1)) {
 					if (!strncmp((char*)input_buffer + (sizeof(config_terminal_echo) - 1), (char*)true_str, sizeof(true_str) - 1)) {
 						echo = true;
@@ -289,10 +358,12 @@ void StartUsbTask(void *argument)
 						echo = false;
 					} else {
 						HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
+						break;
 					}
 				}
 				else {
 					HAL_UART_Transmit(&huart1, error_parse, sizeof(error_parse), HAL_MAX_DELAY);
+					break;
 				}
 				break;
 			} else if (input_buffer[i] == '\x03' || input_buffer[i] == '\x1A') {
