@@ -64,14 +64,14 @@ osThreadId_t UsbTaskHandle;
 const osThreadAttr_t UsbTask_attributes = {
   .name = "UsbTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 2048 * 4
+  .stack_size = 4096 * 4
 };
 /* Definitions for LoraTask */
 osThreadId_t LoraTaskHandle;
 const osThreadAttr_t LoraTask_attributes = {
   .name = "LoraTask",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 1024 * 4
+  .stack_size = 2048 * 4
 };
 /* Definitions for SendLoraQueue */
 osMessageQueueId_t SendLoraQueueHandle;
@@ -216,10 +216,12 @@ void StartUsbTask(void *argument)
 			  "|  ╚╗╔╝║║║║║╚═╗║╚══╗║║ ║║║╚╝║║║║╚═╗║║║╚═╗╔═╝║  ║╚╝║╔═╝║║╚═╝║║╚═╗║╚╝║║║║║ ║║║║  |\n\r"
 			  "|   ╚╝ ╚╝╚╝╚══╝╚═══╝╚╝ ╚╝╚══╝╚╝╚══╝╚╝╚══╝╚══╝  ╚══╝╚══╝╚═══╝╚══╝╚══╝╚╝╚╝ ╚╝╚╝  |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
-	  	  	  "| Radio parameters:                                                            |\n\r"
+	  	  	  "| Radio default parameters:                                                    |\n\r"
 	  	  	  "|    SF = 10                                                                   |\n\r"
 	  	  	  "|    CR = 4/8                                                                  |\n\r"
 	  	  	  "|    Bandwidth = 250k                                                          |\n\r"
+	  	  	  "|    Preamble length (on sending) = 32                                         |\n\r"
+	  	  	  "|    Preamble length (on receiving) = 8                                        |\n\r"
 			  "|    CRC on                                                                    |\n\r"
 			  "|    Implicit header                                                           |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
@@ -233,7 +235,7 @@ void StartUsbTask(void *argument)
 			  "|               | +------ SF: {6: 64, 7: 128, 8: 256, 9: 512,                  |\n\r"
               "|               |              10: 1024, 11: 2048, 12: 4096  chips}            |\n\r"
               "|               +-------- bandwidth 0: 125 kHz, 1: 250 kHz,  2: 500 kHz        |\n\r"
-			  "| ctrl+C or ctrl+Z - for undo                                                  |\n\r"
+			  "|    ctrl+C or ctrl+Z - for undo                                               |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
 	  	  	  "| when LoRa receives data it will be written to this terminal                  |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r";

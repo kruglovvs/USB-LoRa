@@ -238,7 +238,7 @@ int32_t RBI_GetRFOMaxPowerConfig(RBI_RFOMaxPowerConfig_TypeDef Config)
   return BSP_RADIO_GetRFOMaxPowerConfig((BSP_RADIO_RFOMaxPowerConfig_TypeDef) Config);
 #else
   /* 2/ Or implement RBI_RBI_GetRFOMaxPowerConfig here */
-  int32_t ret = 15;
+  int32_t ret = 0;
   /* USER CODE BEGIN RBI_GetRFOMaxPowerConfig_2 */
 #warning user to provide its board code or to call his board driver functions
   if (Config == RBI_RFO_LP_MAXPOWER)
