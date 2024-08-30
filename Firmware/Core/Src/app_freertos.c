@@ -220,10 +220,10 @@ void StartUsbTask(void *argument)
 	  	  	  "|    SF = 10                                                                   |\n\r"
 	  	  	  "|    CR = 4/8                                                                  |\n\r"
 	  	  	  "|    Bandwidth = 250k                                                          |\n\r"
-	  	  	  "|    Preamble length (on sending) = 32                                         |\n\r"
+	  	  	  "|    Preamble length (on sending) = 64                                         |\n\r"
 	  	  	  "|    Preamble length (on receiving) = 8                                        |\n\r"
 			  "|    CRC on                                                                    |\n\r"
-			  "|    Implicit header                                                           |\n\r"
+			  "|    Explicit header                                                           |\n\r"
 			  "|------------------------------------------------------------------------------|\n\r"
 	  	  	  "| You can use these commands:                                                  |\n\r"
 			  "|    @send {data with size < 256} - to send smth over LoRa                     |\n\r"
@@ -341,13 +341,13 @@ void StartUsbTask(void *argument)
 					  		  true);
 					    Radio.SetTxConfig(
 					    	  MODEM_LORA,
-					    	  15,
+					    	  10,
 					  		  0,
 					  		  bandwidth,
 					  		  SF,
 					  		  coderate,
-					  		  32,
-					  		  1,
+					  		  64,
+					  		  0,
 					  		  1,
 					  		  0,
 					  		  0,

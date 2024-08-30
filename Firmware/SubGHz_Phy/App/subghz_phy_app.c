@@ -128,13 +128,13 @@ void SubghzApp_Init(void)
   		  true);
     Radio.SetTxConfig(
     	  MODEM_LORA,
-    	  15,
+    	  10,
   		  0,
   		  1,
   		  10,
   		  4,
-  		  32,
-  		  1,
+		  64,
+  		  0,
   		  1,
   		  0,
   		  0,

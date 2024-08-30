@@ -63,7 +63,7 @@ extern "C" {
   * @remark These defines are used for computing the frequency divider to set the RF frequency
   * @note override the default configuration of radio_driver.c
   */
-#define XTAL_FREQ                   ( 32000000UL )
+#define XTAL_FREQ                   ( 31993300UL )
 
 /**
   * @brief in XO mode, set internal capacitor (from 0x00 to 0x2F starting 11.2pF with 0.47pF steps)
@@ -88,7 +88,7 @@ extern "C" {
   * @remark this define is only used if the DCDC is present on the board
   * @note override the default configuration of radio_driver.c
   */
-#define DCDC_ENABLE                 ( 1UL )
+#define DCDC_ENABLE                 ( 0UL )
 
 /* USER CODE BEGIN EC */
 
